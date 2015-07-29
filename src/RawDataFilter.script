@@ -1,0 +1,55 @@
+﻿//Script GUID:52b54c24-7c75-4b74-b822-d5471a27c028
+//Used for tracking history
+#DECLARE inputNasdaqInfoPath string = @"/my/Hackthon/news.csv";
+Data =
+    EXTRACT CompanyName : string,
+            Action : string,
+            Title : string,
+            Content : string,
+            URL : string
+    FROM @inputNasdaqInfoPath
+    USING DefaultTextExtractor("-d", "|");
+
+
+
+Data =
+    SELECT Util.getCompanyAlias(CompanyName) AS CompanyAlias,
+                                            *
+    FROM Data
+    WHERE(Title.Contains(Action) OR Content.Contains(Action))
+         AND(Title.Contains(Util.getCompanyAlias(CompanyName)) OR Content.Contains(Util.getCompanyAlias(CompanyName)));
+
+OUTPUT Data
+TO SSTREAM "/my/Hackthon/filtered_News.ss";
+
+#CS
+public static class Util
+{
+    public static string getCompanyAlias(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+            return "";
+
+        name = name.Replace("中国", "");
+
+        if (name.Contains("(") && name.Contains(")"))
+        {
+            int pos = name.IndexOf("(");
+            name = name.Substring(0, pos);
+            return name;
+        }
+        else
+        {
+            string sub = "有限公司";
+            if (name.Contains("责任")) 
+            {
+                sub = "有限责任公司";
+            }
+
+            name = name.Replace(sub, "");
+            
+            return name;
+        }
+    }
+}
+#ENDCS
