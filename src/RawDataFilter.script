@@ -15,10 +15,8 @@ Data =
 Data =
     SELECT Util.getCompanyAlias(CompanyName) AS CompanyAlias,
                                             *
-    FROM Data
-    WHERE(Title.Contains(Action) OR Content.Contains(Action))
-         AND(Title.Contains(Util.getCompanyAlias(CompanyName)) OR Content.Contains(Util.getCompanyAlias(CompanyName)));
-
+    FROM Data;
+   
 OUTPUT Data
 TO SSTREAM "/my/Hackthon/filtered_News.ss";
 

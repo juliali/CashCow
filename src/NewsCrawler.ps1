@@ -57,7 +57,7 @@ $element = $IE.document.getElementById("search");
     
     $contentArray = @();
     foreach($content in $element.getElementsByTagName("div"))
-   {
+    {
     
         if ( $content.className -eq "st" ) 
        {            
@@ -66,20 +66,23 @@ $element = $IE.document.getElementById("search");
     
     }
 
-
-
     for($i=0; $i -le 9; $i++)
     {
-        $List +=  $company + " | " +¡¡$action + " | " + $itemArray[$i] + " | " + $contentArray[$i] + " | "  + $urlArray[$i]  + "`n" ;
+        $line =  $company + " | " +¡¡$action + " | " + $itemArray[$i] + " | " + $contentArray[$i] + " | "  + $urlArray[$i]   ;
+
+	    $column_num = $line.Split("|");
+	
+
+	    if (($column_num.length -eq 5 ) -And (-Not $column_num[2].Trim().Equals("")))
+	    {
+		   Write-Host $line;   
+           Write-HOST "OUTPUT" $n
+	       $n++
+
+	 	   $List += $line + "`n";   	
+	    }
+	    $List | out-file -append "F:\tmp\news.csv";	    
     }
-    
-    Write-Host $List + "`n";   
-
-
-$List | out-file -append "F:\tmp\news.csv";
-
-Write-HOST "OUTPUT" $n
-$n++
 }
 }
 
